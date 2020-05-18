@@ -1,28 +1,37 @@
 // Your web app's Firebase configuration
-// var firebaseConfig = {
-//   apiKey: "AIzaSyDMzGY5EYrp70hJfi-_mg_nQvEHU4avs18",
-//   authDomain: "test-project-f0ef0.firebaseapp.com",
-//   databaseURL: "https://test-project-f0ef0.firebaseio.com",
-//   projectId: "test-project-f0ef0",
-//   storageBucket: "test-project-f0ef0.appspot.com",
-//   messagingSenderId: "691526510764",
-//   appId: "1:691526510764:web:45298f0751376ef02ad709"
-// };
+var firebaseConfig = {
+  apiKey: "AIzaSyDMzGY5EYrp70hJfi-_mg_nQvEHU4avs18",
+  authDomain: "test-project-f0ef0.firebaseapp.com",
+  databaseURL: "https://test-project-f0ef0.firebaseio.com",
+  projectId: "test-project-f0ef0",
+  storageBucket: "test-project-f0ef0.appspot.com",
+  messagingSenderId: "691526510764",
+  appId: "1:691526510764:web:45298f0751376ef02ad709"
+};
 
 // Initialize Firebase
-// firebase.initializeApp(firebaseConfig);
+firebase.initializeApp(firebaseConfig);
 
-// var database = firebase.database();
+var database = firebase.database();
+
+
 
 $("#submit-button").on("click", function() {
   event.preventDefault();
-
-  console.log($("#train-name-input").val());
 
   var trainName = $("#train-name-input").val().trim();
   var trainDestination = $("#destination-input").val().trim();
   var trainFirstTime = $("#first-time-input").val().trim();
   var trainFrequency = $("#frequency-input").val().trim();
+
+  var newTrainObject = {
+    trainID: trainName,
+    destination: trainDestination,
+    firstTime: trainFirstTime,
+    frequency: trainFrequency
+  }
+
+  console.log(newTrainObject);
 
   var newRow = $("<tr>");
   var newNameTd = $("<td>").text(trainName);
@@ -37,4 +46,9 @@ $("#submit-button").on("click", function() {
   newRow.append(newMinsAwayTd);
 
   $("#table-rows").append(newRow);
+
+  $("#train-name-input").val("");
+  $("#destination-input").val("");
+  $("#first-time-input").val("");
+  $("#frequency-input").val("");
 })
