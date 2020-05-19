@@ -33,12 +33,29 @@ $("#submit-button").on("click", function() {
 
   console.log(newTrainObject);
 
+  database.ref().push(newTrainObject);
+
+  
+
+  $("#train-name-input").val("");
+  $("#destination-input").val("");
+  $("#first-time-input").val("");
+  $("#frequency-input").val("");
+});
+
+database.ref().on("child_added", function(childSnapshot) {
+
+  var dbTrainName = childSnapshot.val().trainID;
+  var dbTrainDestination = childSnapshot.val().destination;
+  var dbfirstTime = childSnapshot.val().firstTime;
+  var dbFrequency = childSnapshot.val().frequency;
+
   var newRow = $("<tr>");
-  var newNameTd = $("<td>").text(trainName);
+  var newNameTd = $("<td>").text(dbTrainName);
   newRow.append(newNameTd);
-  var newDestinationTd = $("<td>").text(trainDestination);
+  var newDestinationTd = $("<td>").text(dbTrainDestination);
   newRow.append(newDestinationTd);
-  var newFrequencyTd = $("<td>").text(trainFrequency);
+  var newFrequencyTd = $("<td>").text(dbFrequency);
   newRow.append(newFrequencyTd);
   var newNextArriveTd = $("<td>").text("test 1");
   newRow.append(newNextArriveTd);
@@ -47,8 +64,4 @@ $("#submit-button").on("click", function() {
 
   $("#table-rows").append(newRow);
 
-  $("#train-name-input").val("");
-  $("#destination-input").val("");
-  $("#first-time-input").val("");
-  $("#frequency-input").val("");
-})
+});
