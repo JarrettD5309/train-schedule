@@ -18,24 +18,30 @@ var database = firebase.database();
 $("#submit-button").on("click", function() {
   event.preventDefault();
 
-  var trainName = $("#train-name-input").val().trim();
-  var trainDestination = $("#destination-input").val().trim();
-  var trainFirstTime = $("#first-time-input").val().trim();
-  var trainFrequency = $("#frequency-input").val().trim();
+  
+  if ($("#first-time-input").val().trim().length===5) {
+  
+    var trainName = $("#train-name-input").val().trim();
+    var trainDestination = $("#destination-input").val().trim();
+    var trainFirstTime = $("#first-time-input").val().trim();
+    var trainFrequency = $("#frequency-input").val().trim();
 
-  var newTrainObject = {
-    trainID: trainName,
-    destination: trainDestination,
-    firstTime: trainFirstTime,
-    frequency: trainFrequency
+    var newTrainObject = {
+      trainID: trainName,
+      destination: trainDestination,
+      firstTime: trainFirstTime,
+      frequency: trainFrequency
+    }
+
+    database.ref().push(newTrainObject);
+
+    $("#train-name-input").val("");
+    $("#destination-input").val("");
+    $("#first-time-input").val("");
+    $("#frequency-input").val("");
+  } else {
+    alert("Please enter time in correct format HH:mm");
   }
-
-  database.ref().push(newTrainObject);
-
-  $("#train-name-input").val("");
-  $("#destination-input").val("");
-  $("#first-time-input").val("");
-  $("#frequency-input").val("");
 
   
 });
@@ -53,8 +59,8 @@ database.ref().on("child_added", function(childSnapshot) {
   var currentMinute = moment().format("mm");
   var currentTimeMin = (parseInt(currentHour)*60)+parseInt(currentMinute);
 
-  // test value
-  currentTimeMin = 600;
+  // test value for current time (11pm)
+  // currentTimeMin = 1380;
 
   var firstTimeHour = dbFirstTime.substr(0,2);
   var firstTimeMinute = dbFirstTime.substr(3,2);
@@ -64,10 +70,25 @@ database.ref().on("child_added", function(childSnapshot) {
     nextTrainMin = nextTrainMin + parseInt(dbFrequency);
   }
   var nextTrainHour = parseInt(nextTrainMin/60);
-  var nextTrainMinute = nextTrainMin%60;
-  var nextTrainString = nextTrainHour + ":" + nextTrainMinute;
+
+  // fixes minutes with only one digit
+  if ((nextTrainMin%60).toString().length===2) {
+    var nextTrainMinute = nextTrainMin%60;
+  } else if ((nextTrainMin%60).toString().length===1) {
+    var nextTrainMinute = "0"+ nextTrainMin%60;
+  }
 
   var minutesAway = nextTrainMin-currentTimeMin;
+
+  // fixes someone looking up at a late current time ie gives start time for tomorrow
+  if (nextTrainHour>=24) {
+    var nextTrainString = dbFirstTime;
+    minutesAway = firstTimeMin + (1440-currentTimeMin)
+  } else if (nextTrainHour<24) {
+    nextTrainString = nextTrainHour + ":" + nextTrainMinute;
+  }
+
+  
 
 
 
