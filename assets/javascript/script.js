@@ -75,12 +75,24 @@ function trainTimeCalc() {
 
   // fixes someone looking up at a late current time ie gives start time for tomorrow
   if (nextTrainHour>=24) {
-    nextTrainString = dbFirstTime;
+    nextTrainString = amPm(dbFirstTime);
     minutesAway = firstTimeMin + (1440-currentTimeMin)
   } else if (nextTrainHour<24) {
-    nextTrainString = nextTrainHour + ":" + nextTrainMinute;
+    nextTrainString = amPm(nextTrainHour + ":" + nextTrainMinute);
   }
 
+}
+
+function amPm(mltTime) {
+  var hour = parseInt(mltTime.substr(0,2));
+  var min = parseInt(mltTime.substr(3,2));
+  if (hour>12) {
+    var newHour = hour-12;
+    var timeString = newHour + ":" + min + " PM";
+  } else {
+    timeString = hour + ":" + min + " AM";
+  }
+  return(timeString);
 }
 
 function addTableRow() {
