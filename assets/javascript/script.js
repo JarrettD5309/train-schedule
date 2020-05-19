@@ -15,7 +15,6 @@ firebase.initializeApp(firebaseConfig);
 var database = firebase.database();
 
 
-
 $("#submit-button").on("click", function() {
   event.preventDefault();
 
@@ -31,24 +30,46 @@ $("#submit-button").on("click", function() {
     frequency: trainFrequency
   }
 
-  console.log(newTrainObject);
-
   database.ref().push(newTrainObject);
-
-  
 
   $("#train-name-input").val("");
   $("#destination-input").val("");
   $("#first-time-input").val("");
   $("#frequency-input").val("");
+
+  
 });
 
 database.ref().on("child_added", function(childSnapshot) {
 
   var dbTrainName = childSnapshot.val().trainID;
   var dbTrainDestination = childSnapshot.val().destination;
-  var dbfirstTime = childSnapshot.val().firstTime;
+  var dbFirstTime = childSnapshot.val().firstTime;
   var dbFrequency = childSnapshot.val().frequency;
+
+// Next twenty lines are time calc
+  // Current Time
+  var currentHour = moment().format("HH");
+  var currentMinute = moment().format("mm");
+  var currentTimeMin = (parseInt(currentHour)*60)+parseInt(currentMinute);
+
+  // test value
+  currentTimeMin = 600;
+
+  var firstTimeHour = dbFirstTime.substr(0,2);
+  var firstTimeMinute = dbFirstTime.substr(3,2);
+  var firstTimeMin = (parseInt(firstTimeHour)*60)+parseInt(firstTimeMinute);
+  var nextTrainMin = firstTimeMin;
+  while (currentTimeMin>nextTrainMin) {
+    nextTrainMin = nextTrainMin + parseInt(dbFrequency);
+  }
+  var nextTrainHour = parseInt(nextTrainMin/60);
+  var nextTrainMinute = nextTrainMin%60;
+  var nextTrainString = nextTrainHour + ":" + nextTrainMinute;
+
+  var minutesAway = nextTrainMin-currentTimeMin;
+
+
 
   var newRow = $("<tr>");
   var newNameTd = $("<td>").text(dbTrainName);
@@ -57,9 +78,9 @@ database.ref().on("child_added", function(childSnapshot) {
   newRow.append(newDestinationTd);
   var newFrequencyTd = $("<td>").text(dbFrequency);
   newRow.append(newFrequencyTd);
-  var newNextArriveTd = $("<td>").text("test 1");
+  var newNextArriveTd = $("<td>").text(nextTrainString);
   newRow.append(newNextArriveTd);
-  var newMinsAwayTd = $("<td>").text("test 2");
+  var newMinsAwayTd = $("<td>").text(minutesAway);
   newRow.append(newMinsAwayTd);
 
   $("#table-rows").append(newRow);
