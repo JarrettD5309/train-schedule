@@ -14,46 +14,35 @@ firebase.initializeApp(firebaseConfig);
 
 var database = firebase.database();
 
+var dbTrainName;
+var dbTrainDestination;
+var dbFirstTime;
+var dbFrequency;
+var nextTrainString;
+var minutesAway;
 
-$("#submit-button").on("click", function() {
-  event.preventDefault();
+function inputObject() {
+  var trainName = $("#train-name-input").val().trim();
+  var trainDestination = $("#destination-input").val().trim();
+  var trainFirstTime = $("#first-time-input").val().trim();
+  var trainFrequency = $("#frequency-input").val().trim();
 
-  
-  if ($("#first-time-input").val().trim().length===5) {
-  
-    var trainName = $("#train-name-input").val().trim();
-    var trainDestination = $("#destination-input").val().trim();
-    var trainFirstTime = $("#first-time-input").val().trim();
-    var trainFrequency = $("#frequency-input").val().trim();
-
-    var newTrainObject = {
-      trainID: trainName,
-      destination: trainDestination,
-      firstTime: trainFirstTime,
-      frequency: trainFrequency
-    }
-
-    database.ref().push(newTrainObject);
-
-    $("#train-name-input").val("");
-    $("#destination-input").val("");
-    $("#first-time-input").val("");
-    $("#frequency-input").val("");
-  } else {
-    alert("Please enter time in correct format HH:mm");
+  var newTrainObject = {
+    trainID: trainName,
+    destination: trainDestination,
+    firstTime: trainFirstTime,
+    frequency: trainFrequency
   }
 
-  
-});
+  database.ref().push(newTrainObject);
 
-database.ref().on("child_added", function(childSnapshot) {
+  $("#train-name-input").val("");
+  $("#destination-input").val("");
+  $("#first-time-input").val("");
+  $("#frequency-input").val("");
+}
 
-  var dbTrainName = childSnapshot.val().trainID;
-  var dbTrainDestination = childSnapshot.val().destination;
-  var dbFirstTime = childSnapshot.val().firstTime;
-  var dbFrequency = childSnapshot.val().frequency;
-
-// Next twenty lines are time calc
+function trainTimeCalc() {
   // Current Time
   var currentHour = moment().format("HH");
   var currentMinute = moment().format("mm");
@@ -62,13 +51,17 @@ database.ref().on("child_added", function(childSnapshot) {
   // test value for current time (11pm)
   // currentTimeMin = 1380;
 
+  // turns dbFirstTime string into number of mins
   var firstTimeHour = dbFirstTime.substr(0,2);
   var firstTimeMinute = dbFirstTime.substr(3,2);
   var firstTimeMin = (parseInt(firstTimeHour)*60)+parseInt(firstTimeMinute);
+
+  // finds next train time in mins
   var nextTrainMin = firstTimeMin;
   while (currentTimeMin>nextTrainMin) {
     nextTrainMin = nextTrainMin + parseInt(dbFrequency);
   }
+
   var nextTrainHour = parseInt(nextTrainMin/60);
 
   // fixes minutes with only one digit
@@ -78,20 +71,19 @@ database.ref().on("child_added", function(childSnapshot) {
     var nextTrainMinute = "0"+ nextTrainMin%60;
   }
 
-  var minutesAway = nextTrainMin-currentTimeMin;
+  minutesAway = nextTrainMin-currentTimeMin;
 
   // fixes someone looking up at a late current time ie gives start time for tomorrow
   if (nextTrainHour>=24) {
-    var nextTrainString = dbFirstTime;
+    nextTrainString = dbFirstTime;
     minutesAway = firstTimeMin + (1440-currentTimeMin)
   } else if (nextTrainHour<24) {
     nextTrainString = nextTrainHour + ":" + nextTrainMinute;
   }
 
-  
+}
 
-
-
+function addTableRow() {
   var newRow = $("<tr>");
   var newNameTd = $("<td>").text(dbTrainName);
   newRow.append(newNameTd);
@@ -103,7 +95,29 @@ database.ref().on("child_added", function(childSnapshot) {
   newRow.append(newNextArriveTd);
   var newMinsAwayTd = $("<td>").text(minutesAway);
   newRow.append(newMinsAwayTd);
-
   $("#table-rows").append(newRow);
+}
 
+
+$("#submit-button").on("click", function() {
+  event.preventDefault();
+  
+  if ($("#first-time-input").val().trim().length===5) {
+    inputObject();
+  } else {
+    alert("Please enter time in correct format HH:mm");
+  }
+
+});
+
+database.ref().on("child_added", function(childSnapshot) {
+
+  dbTrainName = childSnapshot.val().trainID;
+  dbTrainDestination = childSnapshot.val().destination;
+  dbFirstTime = childSnapshot.val().firstTime;
+  dbFrequency = childSnapshot.val().frequency;
+
+  trainTimeCalc();
+
+  addTableRow();
 });
