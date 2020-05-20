@@ -18,6 +18,7 @@ var dbTrainName;
 var dbTrainDestination;
 var dbFirstTime;
 var dbFrequency;
+var dbKey;
 var nextTrainString;
 var minutesAway;
 
@@ -85,7 +86,8 @@ function trainTimeCalc() {
 
 function amPm(mltTime) {
   var hour = parseInt(mltTime.substr(0,2));
-  var min = parseInt(mltTime.substr(3,2));
+  var min = mltTime.substr(3,2);
+
   if (hour>12) {
     var newHour = hour-12;
     var timeString = newHour + ":" + min + " PM";
@@ -96,7 +98,7 @@ function amPm(mltTime) {
 }
 
 function addTableRow() {
-  var newRow = $("<tr>");
+  var newRow = $("<tr>").attr("id",dbKey);
   var newNameTd = $("<td>").text(dbTrainName);
   newRow.append(newNameTd);
   var newDestinationTd = $("<td>").text(dbTrainDestination);
@@ -107,6 +109,8 @@ function addTableRow() {
   newRow.append(newNextArriveTd);
   var newMinsAwayTd = $("<td>").text(minutesAway);
   newRow.append(newMinsAwayTd);
+  var newRemoveTd = $("<td>").append($("<button>").addClass("remove-button").attr("data-key",dbKey).text("Remove"));
+  newRow.append(newRemoveTd);
   $("#table-rows").append(newRow);
 }
 
@@ -128,8 +132,16 @@ database.ref().on("child_added", function(childSnapshot) {
   dbTrainDestination = childSnapshot.val().destination;
   dbFirstTime = childSnapshot.val().firstTime;
   dbFrequency = childSnapshot.val().frequency;
+  dbKey = childSnapshot.key;
+  
 
   trainTimeCalc();
 
   addTableRow();
+});
+
+$(document).on("click",".remove-button", function() {
+  var trID = $(this).attr("data-key");
+  database.ref(trID).remove();
+  $("#"+trID).remove();
 });

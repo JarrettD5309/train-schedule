@@ -16,6 +16,7 @@
             <th>Frequency (mins)</th>
             <th>Next Arrival</th>
             <th>Minutes Away</th>
+            <th>Remove Train</th>
             </tr>
         </thead>
         <tbody id="table-rows">
@@ -25,6 +26,7 @@
             <td>45</td>
             <td>12:10 PM</td>
             <td>43</td>
+            <td><button>Remove</button></td>
             </tr>
         </tbody>
     </table>
@@ -36,10 +38,10 @@
         <label for="destination-input">Destination:</label><br>
         <input type="text" id="destination-input" name="destination-input" ><br>
 
-        <label for="first-time-input">First Train Time:</label><br>
+        <label for="first-time-input">First Train Time (HH:mm - military time):</label><br>
         <input type="text" id="first-time-input" name="first-time-input" ><br>
 
-        <label for="frequency-input">Frequency:</label><br>
+        <label for="frequency-input">Frequency (min):</label><br>
         <input type="text" id="frequency-input" name="frequency-input" ><br>
 
         <input type="submit" value="Submit" id="submit-button">
