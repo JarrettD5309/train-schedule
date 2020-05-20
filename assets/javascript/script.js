@@ -109,7 +109,8 @@ function addTableRow() {
   newRow.append(newNextArriveTd);
   var newMinsAwayTd = $("<td>").text(minutesAway);
   newRow.append(newMinsAwayTd);
-  var newRemoveTd = $("<td>").append($("<button>").addClass("remove-button").attr("data-key",dbKey).text("Remove"));
+  var newRemoveTd = $("<td>").append($("<button>").addClass("remove-button btn-floating btn-small waves-effect waves-light red darken-1").attr("data-key",dbKey).append($("<i>").addClass("material-icons").text("block")));
+
   newRow.append(newRemoveTd);
   $("#table-rows").append(newRow);
 }
