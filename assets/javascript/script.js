@@ -1,4 +1,4 @@
-// Your web app's Firebase configuration
+// Firebase configuration
 var firebaseConfig = {
   apiKey: "AIzaSyDMzGY5EYrp70hJfi-_mg_nQvEHU4avs18",
   authDomain: "test-project-f0ef0.firebaseapp.com",
@@ -84,6 +84,7 @@ function trainTimeCalc() {
 
 }
 
+// Takes military time and outputs a string with matching AM or PM
 function amPm(mltTime) {
   var hour = parseInt(mltTime.substr(0,2));
   var min = mltTime.substr(3,2);
@@ -134,7 +135,6 @@ database.ref().on("child_added", function(childSnapshot) {
   dbFrequency = childSnapshot.val().frequency;
   dbKey = childSnapshot.key;
   
-
   trainTimeCalc();
 
   addTableRow();
