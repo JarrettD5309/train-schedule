@@ -6,7 +6,7 @@ By Jarrett Dougherty
 
 
 ## Description
-Train Schedule App is a web-based program used to calculate and catalog next arrival times and minutes until next arrival. The app was built with jQuery and utilizes the Materialize CSS framework. It also incorporates a Firebase database for data persistance. 
+Train Schedule App is a web-based program used to calculate and catalog next arrival times and minutes until next arrival. The app was built with jQuery and utilizes the Materialize CSS framework. It also incorporates a Firebase database for data persistence and Moment.js for real-time date/time integration.
 
 ## Instructions For Use
 * Enter the requested information about the train.
